@@ -15,5 +15,5 @@ void loop() {
     CRGB color;
     loopWiFi(&color);
     ledset(&color);
-    delay(1000);
+    delay(100);
 }
