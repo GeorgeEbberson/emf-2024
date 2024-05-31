@@ -27,9 +27,15 @@ void ledsetup()
 void ledset(CRGB *color)
 {
     // Set all LEDs to selected color
+
+    CRGB rndcolor;
+    rndcolor.r = random(0,3)*32;
+    rndcolor.g = random(0,3)*32;
+    rndcolor.b = random(0,3)*32;
+    
     for (int i = 1; i < NUM_LEDS; i++)
     {
-        leds[i] = *color;
+        leds[i] = rndcolor;
     }
 
     // Tick First LED as a keepalive

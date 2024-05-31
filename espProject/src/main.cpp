@@ -14,8 +14,8 @@ void setup() {
 
 void loop() {
     static CRGB color;
-    HTTPClient http;
-    loopWiFi(&color, &http);
+    // HTTPClient http;
+    // loopWiFi(&color, &http);
     ledset(&color);
-    delay(1000);
+    delay(50);
 }
