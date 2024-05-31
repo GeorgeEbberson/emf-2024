@@ -40,8 +40,7 @@ void loopWiFi(CRGB *color)
     int httpResponseCode = http.GET();
 
     if (httpResponseCode > 0) {
-        Serial.print("HTTP Response code: ");
-        Serial.print(httpResponseCode);
+        Serial.printf("HTTP Response code: %u\n", httpResponseCode);
         // Has to be like this else it is bad
         String parcelString = http.getString();
         const char *parcelChar = parcelString.c_str();
@@ -52,8 +51,7 @@ void loopWiFi(CRGB *color)
         Serial.printf(" - Packet: R: %u G: %u B: %u\n", color->r, color->g, color->b);
     }
     else {
-        Serial.print("Error code: ");
-        Serial.println(httpResponseCode);
+        Serial.printf("Error code: %u\n", httpResponseCode);
     }
     // Free resources
     http.end();
