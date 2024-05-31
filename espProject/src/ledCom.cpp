@@ -33,13 +33,13 @@ void ledset(CRGB *color)
     }
 
     // Tick First LED as a keepalive
-    if (leds[0] == 0)
+    if (leds[0].r == 0 && leds[0].g == 0 && leds[0].b == 0)
     {
         leds[0] = *color;
     }
     else
     {
-        leds[0] = 0;
+        setLed(&leds[0], 0, 0, 0);
     }
     // Serial.printf("Wang: R: %u G: %u B: %u into LEDs\n", color->r, color->g, color->b);
     FastLED.show();
