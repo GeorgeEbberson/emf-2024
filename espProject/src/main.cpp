@@ -1,6 +1,7 @@
 
 #include <Arduino.h>
 #include <FastLED.h>
+#include <HTTPClient.h>
 
 #include "wifiCom.hpp"
 #include "ledCOM.hpp"
@@ -13,7 +14,8 @@ void setup() {
 
 void loop() {
     static CRGB color;
-    loopWiFi(&color);
+    HTTPClient http;
+    loopWiFi(&color, &http);
     ledset(&color);
-    delay(100);
+    delay(1000);
 }

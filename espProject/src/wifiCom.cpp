@@ -26,7 +26,7 @@ void initWiFi()
     Serial.println(WiFi.RSSI());
 }
 
-void loopWiFi(CRGB *color)
+void loopWiFi(CRGB *color, HTTPClient *http)
 {
     int parcel = -1;
 
@@ -35,14 +35,17 @@ void loopWiFi(CRGB *color)
         initWiFi();
     }
 
-    HTTPClient http;
-    http.begin(server.c_str());
-    int httpResponseCode = http.GET();
+    if (!http->connected())
+    {
+        http->end();
+        http->begin(server.c_str());
+    }
+    int httpResponseCode = http->GET();
 
     if (httpResponseCode > 0) {
         Serial.printf("HTTP Response code: %u\n", httpResponseCode);
         // Has to be like this else it is bad
-        String parcelString = http.getString();
+        String parcelString = http->getString();
         const char *parcelChar = parcelString.c_str();
 
         color->r = parcelChar[0];
@@ -53,7 +56,5 @@ void loopWiFi(CRGB *color)
     else {
         Serial.printf("Error code: %u\n", httpResponseCode);
     }
-    // Free resources
-    http.end();
 }
 
