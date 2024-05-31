@@ -12,7 +12,7 @@ void setup() {
 }
 
 void loop() {
-    CRGB color;
+    static CRGB color;
     loopWiFi(&color);
     ledset(&color);
     delay(100);
