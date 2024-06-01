@@ -1,8 +1,14 @@
+#include <stdint.h>
 #include <Arduino.h>
 #include <FastLED.h>
 
+#include "common.hpp"
+
 #define DATA_PIN 26
 #define NUM_LEDS 600
+
+#define WAIT_BLOCK_MS (500u)
+#define WAIT_BLOCK_TICKS ((TickType_t)(WAIT_BLOCK_MS / portTICK_PERIOD_MS))
 
 CRGB leds[NUM_LEDS];
 
@@ -24,14 +30,14 @@ void ledsetup()
 
 }
 
-void ledset(int *mode, CRGB *color, int *brightness)
+void ledset(int mode, CRGB *color, int brightness)
 {
     static int frameCounter;  // reset this when mode changes?
-    switch (*mode)
+    switch (mode)
     {
         case 1:  // Normal
         {
-            FastLED.setBrightness(*brightness);
+            FastLED.setBrightness(brightness);
             // Set all LEDs to selected color
             for (int i = 1; i < NUM_LEDS; i++)
             {
@@ -41,11 +47,11 @@ void ledset(int *mode, CRGB *color, int *brightness)
         }
         case 2:  // Forced Rave
         {
-            FastLED.setBrightness(*brightness);
+            FastLED.setBrightness(brightness);
             color->r = random(0,3)*32;
             color->g = random(0,3)*32;
             color->b = random(0,3)*32;
-            
+
             // Set all LEDs to selected color
             for (int i = 1; i < NUM_LEDS; i++)
             {
@@ -55,7 +61,7 @@ void ledset(int *mode, CRGB *color, int *brightness)
         }
         case 3:  // Color Pulse
         {
-            FastLED.setBrightness(*brightness * sin(2 * PI * (frameCounter % 50)/50));
+            FastLED.setBrightness(brightness * sin(2 * PI * (frameCounter % 50)/50));
             // Set all LEDs to selected color
             for (int i = 1; i < NUM_LEDS; i++)
             {
@@ -82,10 +88,39 @@ void ledset(int *mode, CRGB *color, int *brightness)
     {
         setLed(&leds[0], 0, 0, 0);
     }
-    Serial.printf("Wang: Mode: %u R: %u G: %u B: %u Brightness: %u into LEDs\n", *mode, color->r, color->g, color->b, *brightness);
-    
+    Serial.printf("Wang: Mode: %u R: %u G: %u B: %u Brightness: %u into LEDs\n", mode, color->r, color->g, color->b, brightness);
+
     // Pleanery
     frameCounter++;
     FastLED.show();
 
+}
+
+void ledstep(const ThreadMsg_t *msg)
+{
+    CRGB color;
+    color.r = msg->rgb[0u];
+    color.g = msg->rgb[1u];
+    color.b = msg->rgb[2u];
+    ledset(msg->mode, &color, msg->brightness);
+}
+
+void LedMain(void *param)
+{
+    Serial.println("Started LED thread");
+    QueueHandle_t queue = (QueueHandle_t)param;
+    ledsetup();
+
+    ThreadMsg_t lastMsg;
+
+    while (true)
+    {
+        ThreadMsg_t newMsg;
+        BaseType_t result = xQueueReceive(queue, &newMsg, WAIT_BLOCK_TICKS);
+        if (result == pdTRUE)
+        {
+            lastMsg = newMsg;
+        }
+        ledstep(&lastMsg);
+    }
 }
