@@ -7,8 +7,8 @@
 #define DATA_PIN 26
 #define NUM_LEDS 600
 
-#define WAIT_BLOCK_MS (500u)
-#define WAIT_BLOCK_TICKS ((TickType_t)(WAIT_BLOCK_MS / portTICK_PERIOD_MS))
+#define LED_PERIOD_MS (100u)
+#define LED_PERIOD_TICKS ((TickType_t)(LED_PERIOD_MS / portTICK_PERIOD_MS))
 
 CRGB leds[NUM_LEDS];
 
@@ -113,10 +113,12 @@ void LedMain(void *param)
 
     ThreadMsg_t lastMsg;
 
+    TickType_t lastWakeTime = xTaskGetTickCount();
     while (true)
     {
+        vTaskDelayUntil(&lastWakeTime, LED_PERIOD_TICKS);
         ThreadMsg_t newMsg;
-        BaseType_t result = xQueueReceive(queue, &newMsg, WAIT_BLOCK_TICKS);
+        BaseType_t result = xQueueReceive(queue, &newMsg, NON_BLOCKING);
         if (result == pdTRUE)
         {
             lastMsg = newMsg;

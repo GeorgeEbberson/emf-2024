@@ -8,8 +8,8 @@
 #include "common.hpp"
 #include "ledCOM.hpp"
 
-#define SEND_WAIT_MS (50u)
-#define SEND_WAIT_TICKS ((TickType_t)(SEND_WAIT_MS / portTICK_PERIOD_MS))
+#define POLL_WAIT_MS (1000u)
+#define POLL_PERIOD_TICKS ((TickType_t)(POLL_WAIT_MS / portTICK_PERIOD_MS))
 
 const char* ssid = "emf2024-open";
 const char* password = "";
@@ -76,16 +76,17 @@ void NetworkMain(void *param)
 
     HTTPClient http;
 
+    TickType_t lastWakeTime = xTaskGetTickCount();
     while (true)
     {
-        delay(1000);
+        vTaskDelayUntil(&lastWakeTime, POLL_PERIOD_TICKS);
         ThreadMsg_t msg;
         loopWiFi(&msg, &http);
 
         UBaseType_t spaces = uxQueueSpacesAvailable(queue);
         if (spaces > 0)
         {
-            xQueueSendToBack(queue, &msg, SEND_WAIT_TICKS);
+            xQueueSendToBack(queue, &msg, NON_BLOCKING);
         }
     }
 }

@@ -37,7 +37,7 @@ void setup() {
         0,           // Priority
         &taskLed,    // Task handle out
         CORE_LEDS);  // Core binding
-    
+
     Serial.println("LED started");
 
     xTaskCreatePinnedToCore(
@@ -48,7 +48,7 @@ void setup() {
         1,
         &taskNetwork,
         CORE_NETWORK);
-    
+
     Serial.println("NET started");
 }
 
