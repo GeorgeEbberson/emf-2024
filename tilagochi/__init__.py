@@ -1,0 +1,1 @@
+from .tilagochi import LittleMonster
