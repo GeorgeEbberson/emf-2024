@@ -32,7 +32,7 @@ void setup() {
     xTaskCreatePinnedToCore(
         LedMain,     // Function to run
         "LedThread", // Task name
-        2000,        // Stack size in words
+        9600,        // Stack size in words
         msgQueue,    // Parameter to pass in
         0,           // Priority
         &taskLed,    // Task handle out
