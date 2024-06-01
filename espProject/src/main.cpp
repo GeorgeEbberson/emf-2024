@@ -13,9 +13,11 @@ void setup() {
 }
 
 void loop() {
+    static int mode;
     static CRGB color;
+    static int brightness;
     HTTPClient http;
-    loopWiFi(&color, &http);
-    ledset(&color);
+    loopWiFi(&mode, &color, &brightness, &http);
+    ledset(&mode, &color, &brightness);
     delay(1000);
 }

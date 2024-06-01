@@ -4,6 +4,6 @@
 #include <FastLED.h>
 
 void ledsetup();
-void ledset(CRGB *color);
+void ledset(int *mode, CRGB *color, int *brightness);
 
 #endif // LEDCOM

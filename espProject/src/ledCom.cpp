@@ -24,12 +24,53 @@ void ledsetup()
 
 }
 
-void ledset(CRGB *color)
+void ledset(int *mode, CRGB *color, int *brightness)
 {
-    // Set all LEDs to selected color
-    for (int i = 1; i < NUM_LEDS; i++)
+    static int frameCounter;  // reset this when mode changes?
+    switch (*mode)
     {
-        leds[i] = *color;
+        case 1:  // Normal
+        {
+            FastLED.setBrightness(*brightness);
+            // Set all LEDs to selected color
+            for (int i = 1; i < NUM_LEDS; i++)
+            {
+                leds[i] = *color;
+            }
+            break;
+        }
+        case 2:  // Forced Rave
+        {
+            FastLED.setBrightness(*brightness);
+            color->r = random(0,3)*32;
+            color->g = random(0,3)*32;
+            color->b = random(0,3)*32;
+            
+            // Set all LEDs to selected color
+            for (int i = 1; i < NUM_LEDS; i++)
+            {
+                leds[i] = *color;
+            }
+            break;
+        }
+        case 3:  // Color Pulse
+        {
+            FastLED.setBrightness(*brightness * sin(2 * PI * (frameCounter % 50)/50));
+            // Set all LEDs to selected color
+            for (int i = 1; i < NUM_LEDS; i++)
+            {
+                leds[i] = *color;
+            }
+            break;
+        }
+        case 4:  // Spectrum Wave
+        {
+            break;
+        }
+        case 5:  // Static Rainbow
+        {
+            break;
+        }
     }
 
     // Tick First LED as a keepalive
@@ -41,6 +82,10 @@ void ledset(CRGB *color)
     {
         setLed(&leds[0], 0, 0, 0);
     }
-    // Serial.printf("Wang: R: %u G: %u B: %u into LEDs\n", color->r, color->g, color->b);
+    Serial.printf("Wang: Mode: %u R: %u G: %u B: %u Brightness: %u into LEDs\n", *mode, color->r, color->g, color->b, *brightness);
+    
+    // Pleanery
+    frameCounter++;
     FastLED.show();
+
 }
