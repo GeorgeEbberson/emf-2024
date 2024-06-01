@@ -8,6 +8,14 @@
 // To make queue actions non-blocking (either work now or fail, don't wait)
 #define NON_BLOCKING (0u)
 
+// #define DO_LOGGING
+
+#ifdef DO_LOGGING
+#define DEBUG_LOG(fmt, ...) Serial.printf(fmt, __VA_ARGS__)
+#else
+#define DEBUG_LOG(fmt, ...)
+#endif // DO_LOGGING
+
 // Numbers hardcoded to match the cloud-side
 typedef enum {
     Mode_None = 0u,

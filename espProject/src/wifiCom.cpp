@@ -19,8 +19,7 @@ void initWiFi()
 {
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
-    Serial.println("");
-    Serial.print("Connecting to WiFi ..");
+    Serial.printf("\nConnecting to WiFi...");
     while (WiFi.status() != WL_CONNECTED) {
         Serial.print('.');
         delay(1000);
@@ -47,7 +46,7 @@ void loopWiFi(ThreadMsg_t *msg, HTTPClient *http)
     int httpResponseCode = http->GET();
 
     if (httpResponseCode > 0) {
-        // Serial.printf("HTTP Response code: %u\n", httpResponseCode);
+        DEBUG_LOG("HTTP Response code: %u\n", httpResponseCode);
         // Has to be like this else it is bad
         String parcelString = http->getString();
         const char *parcelChar = parcelString.c_str();
@@ -59,12 +58,12 @@ void loopWiFi(ThreadMsg_t *msg, HTTPClient *http)
         msg->rgb[2] = (uint8_t)parcelChar[3];
         msg->brightness = (uint8_t)parcelChar[4];
 
-        // Serial.printf("Packet: Mode: %u R: %u G: %u B: %u Brightness: %u into LEDs\n",
-        // msg->mode, msg->rgb[0], msg->rgb[1], msg->rgb[2], msg->brightness);
+        DEBUG_LOG("Rx: Mode: %u RGBA: %u,%u,%u,%u\n",
+            msg->mode, msg->rgb[0], msg->rgb[1], msg->rgb[2], msg->brightness);
     }
     else
     {
-        Serial.printf("Error code: %u\n", httpResponseCode);
+        DEBUG_LOG("Error code: %u\n", httpResponseCode);
     }
 }
 
