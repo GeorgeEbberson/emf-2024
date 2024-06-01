@@ -5,6 +5,6 @@
 #include <HTTPClient.h>
 
 void initWiFi();
-void loopWiFi(CRGB *color, HTTPClient *http);
+void loopWiFi(int *mode, CRGB *color, int *brightness, HTTPClient *http);
 
 #endif // WIFICOM

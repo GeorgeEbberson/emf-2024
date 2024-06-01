@@ -26,7 +26,7 @@ void initWiFi()
     Serial.println(WiFi.RSSI());
 }
 
-void loopWiFi(CRGB *color, HTTPClient *http)
+void loopWiFi(int *mode, CRGB *color, int *brightness, HTTPClient *http)
 {
     int parcel = -1;
 
@@ -48,12 +48,16 @@ void loopWiFi(CRGB *color, HTTPClient *http)
         String parcelString = http->getString();
         const char *parcelChar = parcelString.c_str();
 
-        color->r = parcelChar[0];
-        color->g = parcelChar[1];
-        color->b = parcelChar[2];
-        Serial.printf(" - Packet: R: %u G: %u B: %u\n", color->r, color->g, color->b);
+        // Unpack message
+        *mode = parcelChar[0];
+        color->r = parcelChar[1];
+        color->g = parcelChar[2];
+        color->b = parcelChar[3];
+        *brightness = parcelChar[4];
+        Serial.printf(" - Packet: Mode: %u R: %u G: %u B: %u Brightness: %u into LEDs\n", *mode, color->r, color->g, color->b, *brightness);
     }
-    else {
+    else
+    {
         Serial.printf("Error code: %u\n", httpResponseCode);
     }
 }
