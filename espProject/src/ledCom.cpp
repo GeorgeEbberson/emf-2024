@@ -33,14 +33,14 @@ void ledsetup()
 void ledset(int mode, CRGB *color, int brightness)
 {
     static int frameCounter;  // reset this when mode changes?
-    // static bool blinkFlag;
+    static bool blinkFlag;
     switch (mode)
     {
         case Mode_Normal:  // Normal
         {
             FastLED.setBrightness(brightness);
             // Set all LEDs to selected color
-            for (int i = 1; i < NUM_LEDS; i++)
+            for (int i = 0; i < NUM_LEDS; i++)
             {
                 leds[i] = *color;
             }
@@ -54,7 +54,7 @@ void ledset(int mode, CRGB *color, int brightness)
             color->b = random(0,3)*32;
 
             // Set all LEDs to selected color
-            for (int i = 1; i < NUM_LEDS; i++)
+            for (int i = 0; i < NUM_LEDS; i++)
             {
                 leds[i] = *color;
             }
@@ -62,10 +62,6 @@ void ledset(int mode, CRGB *color, int brightness)
         }
         case Mode_Pulse:  // Color Pulse
         {
-            color->r = 0;
-            color->g = 255;
-            color->b = 0;
-
             brightness = (int)(
                 (float)brightness / 2.0f)
                 * ((float)sin((2 * PI * (float)(frameCounter % ANIM_SPEED))/ float(ANIM_SPEED))
@@ -74,7 +70,7 @@ void ledset(int mode, CRGB *color, int brightness)
                         
             FastLED.setBrightness(brightness);
             // Set all LEDs to selected color (except first)
-            for (int i = 1; i < NUM_LEDS; i++)
+            for (int i = 0; i < NUM_LEDS; i++)
             {
                 leds[i] = *color;
             }
@@ -91,14 +87,18 @@ void ledset(int mode, CRGB *color, int brightness)
     }
 
     // Tick First LED as a keepalive
-    if (leds[0].r == 0 && leds[0].g == 0 && leds[0].b == 0)
-    {
-        leds[0] = *color;
-    }
-    else
+    if (blinkFlag)
     {
         setLed(&leds[0], 0, 0, 0);
     }
+    else
+    {
+        leds[0] = *color;
+    }
+    blinkFlag = !blinkFlag;
+
+    // Serial.printf("Wang: Mode: %u R: %u G: %u B: %u Brightness: %u into LEDs\n",
+    // mode, color->r, color->g, color->b, brightness);
 
     Serial.printf("Wang: Mode: %u R: %u G: %u B: %u Brightness: %u into LEDs\n",
     mode, color->r, color->g, color->b, brightness);

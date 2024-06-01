@@ -59,8 +59,8 @@ void loopWiFi(ThreadMsg_t *msg, HTTPClient *http)
         msg->rgb[2] = (uint8_t)parcelChar[3];
         msg->brightness = (uint8_t)parcelChar[4];
 
-        Serial.printf("Packet: Mode: %u R: %u G: %u B: %u Brightness: %u into LEDs\n",
-        msg->mode, msg->rgb[0], msg->rgb[1], msg->rgb[2], msg->brightness);
+        // Serial.printf("Packet: Mode: %u R: %u G: %u B: %u Brightness: %u into LEDs\n",
+        // msg->mode, msg->rgb[0], msg->rgb[1], msg->rgb[2], msg->brightness);
     }
     else
     {
