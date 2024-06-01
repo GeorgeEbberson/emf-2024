@@ -24,9 +24,9 @@ void ledsetup()
 {
     FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
     FastLED.setCorrection(LEDColorCorrection::TypicalPixelString);
-    setLed(&leds[0], 255, 0, 0);
-    setLed(&leds[1], 0, 255, 0);
-    setLed(&leds[2], 0, 0, 255);
+    setLed(&leds[1], 255, 0, 0);
+    setLed(&leds[2], 0, 255, 0);
+    setLed(&leds[3], 0, 0, 255);
     FastLED.show();
 }
 
@@ -34,6 +34,8 @@ void ledset(int mode, CRGB *color, int brightness)
 {
     static int frameCounter;  // reset this when mode changes?
     static bool blinkFlag;
+    static int raveColor[3];
+
     switch (mode)
     {
         case Mode_Normal:  // Normal
@@ -49,9 +51,16 @@ void ledset(int mode, CRGB *color, int brightness)
         case Mode_Rave:  // Forced Rave
         {
             FastLED.setBrightness(brightness);
-            color->r = random(0,3)*32;
-            color->g = random(0,3)*32;
-            color->b = random(0,3)*32;
+            if (frameCounter % 4 == 0)
+            {
+                raveColor[0] = random(0,3)*32;
+                raveColor[1] = random(0,3)*32;
+                raveColor[2] = random(0,3)*32;
+            }
+
+            color->r = raveColor[0];
+            color->g = raveColor[1];
+            color->b = raveColor[2];
 
             // Set all LEDs to selected color
             for (int i = 0; i < NUM_LEDS; i++)
@@ -63,12 +72,12 @@ void ledset(int mode, CRGB *color, int brightness)
         case Mode_Pulse:  // Color Pulse
         {
             brightness = (int)(
-                (float)brightness / 2.0f)
+                ((float)brightness / 2.0f)
                 * ((float)sin((2 * PI * (float)(frameCounter % ANIM_SPEED))/ float(ANIM_SPEED))
-                + 1.0f
+                + 1.0f)
               );
-                        
             FastLED.setBrightness(brightness);
+                        
             // Set all LEDs to selected color (except first)
             for (int i = 0; i < NUM_LEDS; i++)
             {
@@ -78,10 +87,59 @@ void ledset(int mode, CRGB *color, int brightness)
         }
         case Mode_Spectrum:  // Spectrum Wave
         {
+            FastLED.setBrightness(brightness);
+
+            int offset = (int)(0.333f * ANIM_SPEED);
+            // Generate rainbow in time domain
+            color->r = (int)(
+                ((float)brightness / 2.0f)
+                * ((float)sin((2 * PI * (float)((frameCounter) % ANIM_SPEED))/ (float)ANIM_SPEED)
+                + 1.0f)
+              );
+            color->g = (int)(
+                ((float)brightness / 2.0f)
+                * ((float)sin((2 * PI * (float)((frameCounter + offset) % ANIM_SPEED))/ (float)ANIM_SPEED)
+                + 1.0f)
+              );
+            color->b = (int)(
+                ((float)brightness / 2.0f)
+                * ((float)sin((2 * PI * (float)((frameCounter + 2 * offset) % ANIM_SPEED))/ (float)ANIM_SPEED)
+                + 1.0f)
+              );
+
+            // Set all LEDs to selected color (except first)
+            for (int i = 0; i < NUM_LEDS; i++)
+            {
+                leds[i] = *color;
+            }
             break;
         }
         case Mode_Rainbow:  // Static Rainbow
         {
+            FastLED.setBrightness(brightness);
+
+            int offset = (int)(0.333f * NUM_LEDS);
+            // Set all LEDs
+            for (int i = 0; i < NUM_LEDS; i++)
+            {
+                // Generate rainbow in space domain
+                color->r = (int)(
+                    ((float)brightness / 2.0f)
+                    * ((float)sin((2 * PI * (float)(i))/ (float)NUM_LEDS)
+                    + 1.0f)
+                );
+                color->g = (int)(
+                    ((float)brightness / 2.0f)
+                    * ((float)sin((2 * PI * (float)(i + offset))/ (float)NUM_LEDS)
+                    + 1.0f)
+                );
+                color->b = (int)(
+                    ((float)brightness / 2.0f)
+                    * ((float)sin((2 * PI * (float)(i + 2 * offset))/ (float)NUM_LEDS)
+                    + 1.0f)
+                );
+                leds[i] = *color;
+            }
             break;
         }
     }
@@ -99,9 +157,6 @@ void ledset(int mode, CRGB *color, int brightness)
 
     // Serial.printf("Wang: Mode: %u R: %u G: %u B: %u Brightness: %u into LEDs\n",
     // mode, color->r, color->g, color->b, brightness);
-
-    Serial.printf("Wang: Mode: %u R: %u G: %u B: %u Brightness: %u into LEDs\n",
-    mode, color->r, color->g, color->b, brightness);
 
     // Pleanery
     frameCounter++;
