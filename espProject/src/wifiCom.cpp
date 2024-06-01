@@ -47,20 +47,19 @@ void loopWiFi(ThreadMsg_t *msg, HTTPClient *http)
     int httpResponseCode = http->GET();
 
     if (httpResponseCode > 0) {
-        Serial.printf("HTTP Response code: %u\n", httpResponseCode);
+        // Serial.printf("HTTP Response code: %u\n", httpResponseCode);
         // Has to be like this else it is bad
         String parcelString = http->getString();
         const char *parcelChar = parcelString.c_str();
 
-        msg = (ThreadMsg_t *)&(parcelChar[0]);
+        // Unpack Data from parcel
+        msg->mode = (Mode_t)parcelChar[0];
+        msg->rgb[0] = (uint8_t)parcelChar[1];
+        msg->rgb[1] = (uint8_t)parcelChar[2];
+        msg->rgb[2] = (uint8_t)parcelChar[3];
+        msg->brightness = (uint8_t)parcelChar[4];
 
-        // msg->mode = parcelChar[0];
-        // msg->rgb[0] = parcelChar[1];
-        // msg->rgb[1] = parcelChar[2];
-        // msg->rgb[2] = parcelChar[3];
-        // msg->brightness = parcelChar[4];
-
-        Serial.printf(" - Packet: Mode: %u R: %u G: %u B: %u Brightness: %u into LEDs\n",
+        Serial.printf("Packet: Mode: %u R: %u G: %u B: %u Brightness: %u into LEDs\n",
         msg->mode, msg->rgb[0], msg->rgb[1], msg->rgb[2], msg->brightness);
     }
     else
