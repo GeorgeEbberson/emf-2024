@@ -155,8 +155,8 @@ void ledset(int mode, CRGB *color, int brightness)
     }
     blinkFlag = !blinkFlag;
 
-    // Serial.printf("Wang: Mode: %u R: %u G: %u B: %u Brightness: %u into LEDs\n",
-    // mode, color->r, color->g, color->b, brightness);
+    DEBUG_LOG("Wang: Mode: %u R: %u G: %u B: %u Brightness: %u into LEDs\n",
+    mode, color->r, color->g, color->b, brightness);
 
     // Pleanery
     frameCounter++;
@@ -175,7 +175,7 @@ void ledstep(const ThreadMsg_t *msg)
 
 void LedMain(void *param)
 {
-    Serial.println("Started LED thread");
+    Serial.println("Started LED thread"); // Intentionally not a debug log
     QueueHandle_t queue = (QueueHandle_t)param;
     ledsetup();
 
