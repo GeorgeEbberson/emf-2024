@@ -5,7 +5,11 @@
 #include <HTTPClient.h>
 #include <FastLED.h>
 
+#include "common.hpp"
 #include "ledCOM.hpp"
+
+#define POLL_WAIT_MS (1000u)
+#define POLL_PERIOD_TICKS ((TickType_t)(POLL_WAIT_MS / portTICK_PERIOD_MS))
 
 const char* ssid = "emf2024-open";
 const char* password = "";
@@ -26,7 +30,7 @@ void initWiFi()
     Serial.println(WiFi.RSSI());
 }
 
-void loopWiFi(int *mode, CRGB *color, int *brightness, HTTPClient *http)
+void loopWiFi(ThreadMsg_t *msg, HTTPClient *http)
 {
     int parcel = -1;
 
@@ -48,13 +52,16 @@ void loopWiFi(int *mode, CRGB *color, int *brightness, HTTPClient *http)
         String parcelString = http->getString();
         const char *parcelChar = parcelString.c_str();
 
-        // Unpack message
-        *mode = parcelChar[0];
-        color->r = parcelChar[1];
-        color->g = parcelChar[2];
-        color->b = parcelChar[3];
-        *brightness = parcelChar[4];
-        Serial.printf(" - Packet: Mode: %u R: %u G: %u B: %u Brightness: %u into LEDs\n", *mode, color->r, color->g, color->b, *brightness);
+        msg = (ThreadMsg_t *)&(parcelChar[0]);
+
+        // msg->mode = parcelChar[0];
+        // msg->rgb[0] = parcelChar[1];
+        // msg->rgb[1] = parcelChar[2];
+        // msg->rgb[2] = parcelChar[3];
+        // msg->brightness = parcelChar[4];
+
+        Serial.printf(" - Packet: Mode: %u R: %u G: %u B: %u Brightness: %u into LEDs\n",
+        msg->mode, msg->rgb[0], msg->rgb[1], msg->rgb[2], msg->brightness);
     }
     else
     {
@@ -62,3 +69,24 @@ void loopWiFi(int *mode, CRGB *color, int *brightness, HTTPClient *http)
     }
 }
 
+void NetworkMain(void *param)
+{
+    Serial.println("Started network thread");
+    QueueHandle_t queue = (QueueHandle_t)param;
+
+    HTTPClient http;
+
+    TickType_t lastWakeTime = xTaskGetTickCount();
+    while (true)
+    {
+        vTaskDelayUntil(&lastWakeTime, POLL_PERIOD_TICKS);
+        ThreadMsg_t msg;
+        loopWiFi(&msg, &http);
+
+        UBaseType_t spaces = uxQueueSpacesAvailable(queue);
+        if (spaces > 0)
+        {
+            xQueueSendToBack(queue, &msg, NON_BLOCKING);
+        }
+    }
+}
