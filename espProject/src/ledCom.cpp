@@ -35,7 +35,7 @@ void ledset(int mode, CRGB *color, int brightness)
     static int frameCounter;  // reset this when mode changes?
     switch (mode)
     {
-        case 1:  // Normal
+        case Mode_Normal:  // Normal
         {
             FastLED.setBrightness(brightness);
             // Set all LEDs to selected color
@@ -45,7 +45,7 @@ void ledset(int mode, CRGB *color, int brightness)
             }
             break;
         }
-        case 2:  // Forced Rave
+        case Mode_Rave:  // Forced Rave
         {
             FastLED.setBrightness(brightness);
             color->r = random(0,3)*32;
@@ -59,7 +59,7 @@ void ledset(int mode, CRGB *color, int brightness)
             }
             break;
         }
-        case 3:  // Color Pulse
+        case Mode_Pulse:  // Color Pulse
         {
             FastLED.setBrightness(brightness * sin(2 * PI * (frameCounter % 50)/50));
             // Set all LEDs to selected color
@@ -69,11 +69,11 @@ void ledset(int mode, CRGB *color, int brightness)
             }
             break;
         }
-        case 4:  // Spectrum Wave
+        case Mode_Spectrum:  // Spectrum Wave
         {
             break;
         }
-        case 5:  // Static Rainbow
+        case Mode_Rainbow:  // Static Rainbow
         {
             break;
         }

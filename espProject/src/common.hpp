@@ -5,10 +5,14 @@
 
 #define VEC3 (3u) // Num elements in 3-vector
 
+// Numbers hardcoded to match the cloud-side
 typedef enum {
-    Mode_None,
-    Mode_Normal,
-    Mode_Rave,
+    Mode_None = 0u,
+    Mode_Normal = 1,
+    Mode_Rave = 2,
+    Mode_Pulse = 3,
+    Mode_Spectrum = 4,
+    Mode_Rainbow = 5,
     Mode_MAX
 } Mode_t;
 
