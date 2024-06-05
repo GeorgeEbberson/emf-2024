@@ -31,8 +31,6 @@ void initWiFi()
 
 void loopWiFi(ThreadMsg_t *msg, HTTPClient *http)
 {
-    int parcel = -1;
-
     if (WiFi.status() != WL_CONNECTED)
     {
         initWiFi();
