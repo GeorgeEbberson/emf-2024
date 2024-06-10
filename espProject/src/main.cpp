@@ -7,8 +7,6 @@
 #include "ledCOM.hpp"
 #include "wifiCom.hpp"
 
-#define BAUD_RATE (9600u) // Experimentally derived
-
 #define CORE_NETWORK (0u) // Core for networking thread
 #define CORE_LEDS    (1u) // Core for LED thread
 
