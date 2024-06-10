@@ -1,0 +1,4 @@
+// Wifi credentials, not to be checked in
+// Duplicate this file, call it "wifiCreds.h", and fill in your own wifi details
+#define WIFI_SSID "emf2024-open"
+#define WIFI_PASSWORD ""

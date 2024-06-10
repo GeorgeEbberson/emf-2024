@@ -7,13 +7,14 @@
 
 #include "common.hpp"
 #include "ledCOM.hpp"
+#include "wifiCreds.h"
 
 #define POLL_WAIT_MS (1000u)
 #define POLL_PERIOD_TICKS ((TickType_t)(POLL_WAIT_MS / portTICK_PERIOD_MS))
 
-const char* ssid = "emf2024-open";
-const char* password = "";
-const String server = "http://calls.alexnielsen.me/led";  //95.216.180.212/led/constants
+const char* ssid = WIFI_SSID;
+const char* password = WIFI_PASSWORD;
+const String server = "http://calls.alexnielsen.me/led";
 
 void initWiFi()
 {
@@ -25,8 +26,7 @@ void initWiFi()
         delay(1000);
     }
     Serial.println(WiFi.localIP());
-    Serial.print("RSSI: ");
-    Serial.println(WiFi.RSSI());
+    Serial.printf("RSSI: %i dBm\n", WiFi.RSSI());
 }
 
 void loopWiFi(ThreadMsg_t *msg, HTTPClient *http)
