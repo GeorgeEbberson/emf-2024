@@ -12,8 +12,6 @@ To connect your ESP32 to your WiFi, duplicate [the credentials template][creds_f
 `.template` extension, and update the SSID and password. The file is git ignored, but be extra sure
 not to mistakenly check it in!
 
-Testing
-
 [emf2024]: https://www.emfcamp.org/
 [platform_io]: https://platformio.org/
 [esp32]: https://www.espressif.com/en/products/socs/esp32
