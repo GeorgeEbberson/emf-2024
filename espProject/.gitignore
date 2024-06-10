@@ -1,2 +1,6 @@
+# Build files and folders
 .pio
 .vscode
+
+# Credentials file, public credentials checked in and all others should be ignored
+wifiCreds.h
