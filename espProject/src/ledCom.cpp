@@ -91,21 +91,7 @@ void ledset(int mode, CRGB *color, int brightness)
 
             int offset = (int)(0.333f * ANIM_SPEED);
             // Generate rainbow in time domain
-            color->r = (int)(
-                ((float)brightness / 2.0f)
-                * ((float)sin((2 * PI * (float)((frameCounter) % ANIM_SPEED))/ (float)ANIM_SPEED)
-                + 1.0f)
-              );
-            color->g = (int)(
-                ((float)brightness / 2.0f)
-                * ((float)sin((2 * PI * (float)((frameCounter + offset) % ANIM_SPEED))/ (float)ANIM_SPEED)
-                + 1.0f)
-              );
-            color->b = (int)(
-                ((float)brightness / 2.0f)
-                * ((float)sin((2 * PI * (float)((frameCounter + 2 * offset) % ANIM_SPEED))/ (float)ANIM_SPEED)
-                + 1.0f)
-              );
+            color->setHue(int(255.0f * (float)(frameCounter % ANIM_SPEED) / (float)ANIM_SPEED));
 
             // Set all LEDs to selected color (except first)
             for (int i = 0; i < NUM_LEDS; i++)
@@ -118,26 +104,10 @@ void ledset(int mode, CRGB *color, int brightness)
         {
             FastLED.setBrightness(brightness);
 
-            int offset = (int)(0.333f * NUM_LEDS);
             // Set all LEDs
             for (int i = 0; i < NUM_LEDS; i++)
-            {
-                // Generate rainbow in space domain
-                color->r = (int)(
-                    ((float)brightness / 2.0f)
-                    * ((float)sin((2 * PI * (float)(i))/ (float)NUM_LEDS)
-                    + 1.0f)
-                );
-                color->g = (int)(
-                    ((float)brightness / 2.0f)
-                    * ((float)sin((2 * PI * (float)(i + offset))/ (float)NUM_LEDS)
-                    + 1.0f)
-                );
-                color->b = (int)(
-                    ((float)brightness / 2.0f)
-                    * ((float)sin((2 * PI * (float)(i + 2 * offset))/ (float)NUM_LEDS)
-                    + 1.0f)
-                );
+            {     
+                color->setHue(int(255.0f * (float)i / (float)NUM_LEDS));
                 leds[i] = *color;
             }
             break;
